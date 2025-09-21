@@ -19,8 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.platform.console.ConsoleLauncher;
 
-import dev.jbang.fmt.JavaFormatter;
-
 // JUnit5 Test class for fmt
 public class testFmt {
 

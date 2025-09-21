@@ -10,12 +10,15 @@ package dev.jbang.fmt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.beans.Transient;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.platform.console.ConsoleLauncher;
+
+import dev.jbang.fmt.CodeRange;
 
 // JUnit5 Test class for fmt
 public class testRange {
@@ -24,10 +27,10 @@ public class testRange {
   public void testDirectives() throws Exception {
 
     assertThat(CodeRange.isJBangDirective("//DEPS org.junit.jupiter:junit-jupiter-engine:5.12.2"))
-        .isTrue();
+            .isTrue();
     assertThat(CodeRange.isJBangDirective("//JAVA 21+")).isTrue();
     assertThat(CodeRange.isJBangDirective("//DEPS org.junit.jupiter:junit-jupiter-engine:5.12.2"))
-        .isTrue();
+            .isTrue();
     assertThat(CodeRange.isJBangDirective("// DEPS")).isFalse();
 
   }
@@ -36,9 +39,9 @@ public class testRange {
   public void testPureJava() throws Exception {
 
     String alljava = """
-        package com.example;
-        System.out.println("Hello");
-        """;
+				package com.example;
+				System.out.println("Hello");
+				""";
 
     List<CodeRange> ranges = CodeRange.identifyJavaRanges(alljava);
 
@@ -50,12 +53,11 @@ public class testRange {
 
   @Test
   public void testDoubleSlashinString() throws Exception {
-    String transientCode =
-        """
-            			private static final String PROTO_SCHEMA = \"\"\"																																																																																																														            // File name: Schema.proto
-            // Generated from : Schema.proto
-            		\"\"\";
-            		""";
+    String transientCode = """
+							private static final String PROTO_SCHEMA = \"\"\"																																																																																																														            // File name: Schema.proto
+				// Generated from : Schema.proto
+						\"\"\";
+						""";
 
     List<CodeRange> ranges = CodeRange.identifyJavaRanges(transientCode);
     assertThat(ranges).hasSize(1);
@@ -80,12 +82,12 @@ public class testRange {
   public void testMixed() throws Exception {
 
     String alljava = """
-        ///usr/bin/env jbang "$0" "$@" ; exit $?
+				///usr/bin/env jbang "$0" "$@" ; exit $?
 				      //DEPS org.junit.jupiter:junit-jupiter-engine:5.12.2
 				    //DEPS org.junit.jupiter:junit-jupiter-params:5.12.2
 				    //DEPS org.junit.platform:junit-platform-console:1.12.2
-        public class TestClass{public static void main(String[]args){System.out.println("Hello");}}
-        """;
+				public class TestClass{public static void main(String[]args){System.out.println("Hello");}}
+				""";
 
     List<CodeRange> ranges = CodeRange.identifyJavaRanges(alljava);
 
@@ -101,8 +103,9 @@ public class testRange {
   // jbang will by default put them. Adjust as needed.
   public static void main(final String... args) {
     String jarsList = Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
-        .filter(path -> path.contains("/cache/jars/")).reduce((a, b) -> a + File.pathSeparator + b)
-        .orElse("");
+            .filter(path -> path.contains("/cache/jars/"))
+            .reduce((a, b) -> a + File.pathSeparator + b)
+            .orElse("");
 
     ConsoleLauncher.main("execute", "--scan-class-path", "-cp", jarsList);
   }
